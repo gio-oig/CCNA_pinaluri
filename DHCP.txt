@@ -1,0 +1,14 @@
+არ გამოიყენოს აიპები, რომლებიც სტატიკურად მივუთითეთ
+Router(config)#ip dhcp excluded-address 172.31.0.2
+Router(config)#ip dhcp excluded-address 172.31.0.3
+
+Router(config)#ip dhcp pool arakhamia
+მივუთითით თუ რა ქსელი გამოიყენოს ავტომატურად მისამართების მისანიჭებლად
+Router(dhcp-config)#network 172.31.0.0 255.255.255.128
+გეითვეი
+Router(dhcp-config)#default-router 172.31.0.1
+Router(dhcp-config)#dns-server 4.4.4.4
+Router(dhcp-config)#ex
+Router(config)#do write
+
+

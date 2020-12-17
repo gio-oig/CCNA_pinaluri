@@ -1,0 +1,83 @@
+Router(config)#router ospf 16
+Router(config-router)#router-id 16.16.1.1
+Router(config-router)#network 192.168.0.0 0.0.0.255 area 1
+Router(config-router)#network  10.0.0.0 0.0.0.3 area 1
+Router(config-router)#passive-interface gigabitEthernet 0/0
+Router(config-router)#do write
+
+
+მეხუთე როუტერზე თავში დავამატოთ
+Router(config)#ip route 0.0.0.0 0.0.0.0 100.0.0.02
+
+ეს იყოს მაინც აქ
+Router(config-router)#network 100.0.0.0 0.255.255.255 area 0
+
+ეს ბოლოში
+Router(config-router)#default-information originate 
+
+
+მეექვსე როუტერში ვწერთ
+
+Router(config)#interface loopback 0
+
+
+Router(config-if)#ip address 8.8.8.8 255.255.255.255
+Router(config-if)#ip route 0.0.0.0 0.0.0.0 100.0.0.1
+Router(config)#do write
+
+
+
+------------ ipv6 -------
+
+Router(config)#ipv6 unicast-routing 
+Router(config)#ipv6 router ospf 16
+Router(config-rtr)#router-id 16.16.16.1
+Router(config-rtr)#exit
+
+Router(config)#interface gigabitEthernet 0/1
+no shutdown
+Router(config-if)#ipv6 address FC00::1/64
+Router(config-if)#ipv6 address FE80::2 link-local  ლინკ ლოკალი და ოსპფ გავიმეოროთ ყველა ინტერფეისზე
+Router(config-if)#ipv6 ospf 16 area 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Router(config)#ipv6 unicast-routing 
+Router(config)#ipv6 router ospf 16
+%OSPFv3-4-NORTRID: OSPFv3 process 16 could not pick a router-id,please configure manually
+Router(config-rtr)#route
+Router(config-rtr)#router-id 16.16.16.2
+Router(config-rtr)#exit
+Router(config)#interface gigabitEthernet 0/0
+Router(config-if)#no shutdown 
+
+Router(config-if)#ipv6 address 2001::1/64
+Router(config-if)#ipv6 address FE80::1 link-local 
+Router(config-if)#ipv6 ospf 16 area 0
+Router(config-if)#
+00:24:13: %OSPFv3-5-ADJCHG: Process 16, Nbr 16.16.16.1 on GigabitEthernet0/0 from LOADING to FULL, Loading Done
+
+Router(config-if)#exit
+Router(config)#interface loopback 0
+
+Router(config-if)#ipv6 address 3001::1/64
+Router(config-if)#ipv6 address FE80::1 link-local 
+Router(config-if)#ipv6 ospf 16 area 0
+Router(config-if)#do write
+
+
+
+

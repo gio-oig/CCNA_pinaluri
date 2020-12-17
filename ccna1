@@ -1,0 +1,112 @@
+----- SWITCH
+
+enable
+conf t
+hostname BTU_server
+
+--
+
+vtp mode server
+vtp domain BTU
+vtp password BTU
+--
+
+შევქმნათ vlan-ები
+
+vlan 20
+name LAPTOP
+exit
+vlan 30
+namen SERVER
+exit
+
+--
+
+სვიჩში ინტერფეისებს მივანიჭოთ მაგისტრალური პორტების სტატუსი
+
+interface range gigabitEthernet 0/1-2, fastEthernet 0/24
+switchport mode trunk
+do show vtp status - შევამოწმოთ სტატუსი
+
+------
+
+როუტერის კონპიგურაცია
+
+no ip domain-lookup
+hostname BTU_Router
+interface gigabitEthernet 0/0
+no shutdown
+exit
+
+შევქმნათ გიგაბიტ 0/0 ის ქვე ინტერფეისები
+
+interface gigabitEthernet 0/0.2
+encapsulate dot1Q 20
+ip address G 172.16.0.1 255.255.255.128
+
+exit
+
+interface gigabiEthernet 0/0.3
+encapsulate dot1Q 30
+ip adress G 172.16.0.129 255.255.255.128
+
+!!! do write !!!
+
+----
+
+დავაკონფიგურიროთ მეორე დონეზე მყოფი სვიჩები
+და გავიმეოროთ იგივე ყველა სვიჩზე 
+  
+
+vtp mode client
+
+vtp domain BTU რაც ზევით გავწერეთ სახელი
+vtp password BTU
+
+მივანიჭოთ მაგისტრალური პორტის სტატუსი სვიჩის ინტერფეის
+
+interface range gigabitEthernet 0/1-2
+switchport mode trunk
+do show vlan შევამოწმოთ არის თუ არა შექმნილი vlan ინტერფეისები 20 და30
+exit
+
+
+ სვიჩის ინტერფეისები გავაწვრიანოთ VLAN ში 20 და 30
+ 
+ interface fastEthernet 0/1
+ switchport access vlan 20
+ switchport mode access
+ 
+ exit
+ 
+ interface fastEthernet 0/11
+ switchport access vlan 30
+ switchport mode access
+ 
+ !! do write !!
+ 
+ 
+/////////////////////
+/////////////////////
+
+
+
+
+
+
+
+
+---
+
+შევქმნათ telnet კავშირი სვიჩთან რათა ჰოსტებმაც შეძლონ მასთან კავშირი
+
+
+giorgi_switch(config)#interface vlan 20
+giorgi_switch(config-if)#ip address 192.168.255.11 255.255.255.240
+giorgi_switch(config-if)#ip default-gateway 192.168.255.1
+giorgi_switch(config)#line vty 0 4
+giorgi_switch(config-line)#password arakhamia
+giorgi_switch(config-line)#login
+giorgi_switch(config-line)#exit
+giorgi_switch(config)#enable password arakhamia
+

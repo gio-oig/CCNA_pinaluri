@@ -1,0 +1,24 @@
+Router(config)#hostname Giorgi_arakhamia
+Giorgi_arakhamia(config)#
+Giorgi_arakhamia(config)#ena
+Giorgi_arakhamia(config)#enable pas
+Giorgi_arakhamia(config)#enable password arakhamia
+Giorgi_arakhamia(config)#line console 0
+Giorgi_arakhamia(config-line)#password arakhamia
+Giorgi_arakhamia(config-line)#log
+Giorgi_arakhamia(config-line)#login
+Giorgi_arakhamia(config-line)#exit
+Giorgi_arakhamia(config)#line vty 0
+Giorgi_arakhamia(config-line)#pass
+Giorgi_arakhamia(config-line)#password arakhamia
+Giorgi_arakhamia(config-line)#login
+Giorgi_arakhamia(config-line)#exit
+Giorgi_arakhamia(config)#exit
+Giorgi_arakhamia#
+%SYS-5-CONFIG_I: Configured from console by console
+
+Giorgi_arakhamia#copy sta
+Giorgi_arakhamia#copy startup-config tf
+Giorgi_arakhamia#copy startup-config tftp: 
+Address or name of remote host []? 172.31.0.4
+Destination filename [Giorgi_arakhamia-confg]? Giorgi_Arakhamia

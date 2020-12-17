@@ -1,0 +1,167 @@
+Router(config)#ipv6 unicast-routing 
+Router(config)#ipv6 router  eigrp 77
+Router(config-rtr)#eigrp router-id 77.77.77.7
+Router(config-rtr)#no shutdown 
+Router(config-rtr)# exit
+---- გავიმეოროთ ყველა ინტერფეისზე
+Router(config)#interface gigabitEthernet 0/1
+Router(config-if)#no shutdown 
+
+Router(config-if)#ipv6 address FC11::1/64
+Router(config-if)#ipv6 address FE80::A link-local  ლინკ ლოკალი უნდა გავწეროთ ყველა ინტერფეისისთვის.
+Router(config-if)#ipv6 eigrp 77
+Router(config-if)#exit
+
+
+
+------------ ipv4 -------------
+
+Router(config-if)#exit
+Router(config)#router eigrp 8
+Router(config-router)#eigrp router-id 8.8.8.1
+Router(config-router)#network 10.0.0.0 0.0.0.127
+Router(config-router)#network 192.168.255.0 0.0.0.3
+Router(config-router)#pass
+Router(config-router)#passive-interface  gi
+Router(config-router)#passive-interface  gigabitEthernet 0/0
+Router(config-router)#do write
+Building configuration...
+[OK]
+
+
+სტატიკური როუტი ------ S* 0.0.0.0/0 [1/0] via 200.200.200.2 
+
+Router(config)#ip route 0.0.0.0 0.0.0.0 200.200.200.2
+
+
+Router(config)#router eigrp 8
+Router(config-router)#eigrp router-id 8.8.8.3
+Router(config-router)#network 192.168.255.4 0.0.0.3
+Router(config-router)#
+%DUAL-5-NBRCHANGE: IP-EIGRP 8: Neighbor 192.168.255.5 (GigabitEthernet0/2) is up: new adjacency
+
+Router(config-router)#network 192.168.255.0 0.0.0.3
+Router(config-router)#
+%DUAL-5-NBRCHANGE: IP-EIGRP 8: Neighbor 192.168.255.1 (GigabitEthernet0/1) is up: new adjacency
+
+Router(config-router)#redistribut static  <-!!!!!!!!!!!!!!!!!!!!
+Router(config-router)#do write
+Building configuration...
+[OK]
+
+
+მეოთხე როუტერი  ლუფბექი
+
+
+Router(config)#interface loopback 0
+Router(config-if)#
+%LINK-5-CHANGED: Interface Loopback0, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface Loopback0, changed state to up
+
+
+Router(config-if)#ip address 172.16.0.1 255.255.0.0
+Router(config-if)#exit
+Router(config)#ip route 0.0.0.0 0.0.0.0 200.200.200.1
+Router(config)#do write
+Router(config)#interface loopback 0
+Router(config-if)#description GIORGI ARAKHAMIA
+
+
+
+
+
+-------
+ფინალურის
+
+Router(config)#router eigrp 5
+Router(config-router)#eigrp router-id 5.0.0.1
+Router(config-router)#do show ip route
+
+     10.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+C       10.10.10.8/30 is directly connected, Serial0/0/0
+L       10.10.10.10/32 is directly connected, Serial0/0/0
+     172.16.0.0/16 is variably subnetted, 2 subnets, 2 masks
+C       172.16.0.0/16 is directly connected, GigabitEthernet0/0
+L       172.16.0.1/32 is directly connected, GigabitEthernet0/0
+     172.19.0.0/16 is variably subnetted, 2 subnets, 2 masks
+C       172.19.0.0/16 is directly connected, GigabitEthernet0/1
+L       172.19.0.1/32 is directly connected, GigabitEthernet0/1
+     172.31.0.0/16 is variably subnetted, 2 subnets, 2 masks
+C       172.31.0.0/25 is directly connected, GigabitEthernet0/2
+L       172.31.0.1/32 is directly connected, GigabitEthernet0/2
+ --More-- 
+
+უნდა შევიტანოთ ყველა C
+
+Router(config-router)#network 10.10.10.8 0.0.0.3
+Router(config-router)#network 172.16.0.0 0.0.255.255
+Router(config-router)#network 172.19.0.0 0.0.255.255
+Router(config-router)#network 172.31.0.0 0.0.0.127
+Router(config-router)#do write
+
+გადავედით შემდეგ როუტერზე
+
+
+Router(config)#router eigrp 5
+Router(config-router)#eigrp router-id 5.0.0.2
+Router(config-router)#do show ip route
+
+     10.0.0.0/8 is variably subnetted, 4 subnets, 2 masks
+C       10.10.10.4/30 is directly connected, Serial0/0/1
+L       10.10.10.6/32 is directly connected, Serial0/0/1
+C       10.10.10.8/30 is directly connected, Serial0/0/0
+L       10.10.10.9/32 is directly connected, Serial0/0/0
+
+Router(config-router)#network 10.10.10.4 0.0.0.3 
+Router(config-router)#network 10.10.10.8 0.0.0.3
+Router(config-router)#
+%DUAL-5-NBRCHANGE: IP-EIGRP 5: Neighbor 10.10.10.10 (Serial0/0/0) is up: new adjacency
+
+Router(config-router)#do write
+
+
+
+გადავედით შემდეგ როუტერზე
+
+Router(config)#router eigrp 5
+Router(config-router)#eigrp router-id 5.0.0.3
+Router(config-router)#do show ip route
+
+
+     10.0.0.0/8 is variably subnetted, 4 subnets, 2 masks
+C       10.10.10.0/30 is directly connected, Serial0/0/0
+L       10.10.10.2/32 is directly connected, Serial0/0/0
+C       10.10.10.4/30 is directly connected, Serial0/0/1
+L       10.10.10.5/32 is directly connected, Serial0/0/1
+     200.200.200.0/28 is subnetted, 1 subnets
+S       200.200.200.0/28 [1/0] via 10.10.10.1
+
+Router(config-router)#netw
+Router(config-router)#network 10.10.10.0 0.0.0.3
+Router(config-router)#network 10.10.10.4 0.0.0.3
+
+Router(config-router)#redistribute static 
+do write
+
+ბოლო როუტერი
+
+Router(config)#router eigrp 5
+Router(config-router)#eigrp router-id 5.0.0.4
+Router(config-router)#do show ip route
+
+     10.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+C       10.10.10.0/30 is directly connected, Serial0/0/0
+L       10.10.10.1/32 is directly connected, Serial0/0/0
+     192.168.255.0/24 is variably subnetted, 4 subnets, 2 masks
+C       192.168.255.0/28 is directly connected, GigabitEthernet0/0.2
+L       192.168.255.1/32 is directly connected, GigabitEthernet0/0.2
+C       192.168.255.16/28 is directly connected, GigabitEthernet0/0.3
+L       192.168.255.17/32 is directly connected, GigabitEthernet0/0.3
+S*   0.0.0.0/0 [1/0] via 10.10.10.2
+
+Router(config-router)#network 192.168.255.0 0.0.0.15
+Router(config-router)#network 10.10.10.0 0.0.0.3
+Router(config-router)#network 192.168.255.16 0.0.0.15
+Router(config-router)#do write
+
